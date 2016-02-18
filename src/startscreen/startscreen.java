@@ -5,6 +5,8 @@
  */
 package startscreen;
 
+import static fullgame.FullGame.running;
+import static fullgame.FullGame.timer;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +16,8 @@ import java.awt.Color;
 import static scores.scoreScreen.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,19 +28,25 @@ import javax.swing.JLabel;
  */
 public class startscreen {
     
+    private static int step;
+    private static boolean timerrun = false;
+    
     // rgb(155, 90, 182) BACKGROUND
+    // TURQ rgb(26, 188, 156)
+    // ORAGNE rgb(230, 126, 34)
+    // YELL rgb(243, 156, 18)
+    // GREEN rgb(46, 204, 113)
     // rgb(236, 240, 241) TITLE
     
     public static void startScreen() {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         final JFrame start = new JFrame("Game Menu");
-        Color bg = new Color(155, 90, 182);
         start.setSize(400, 560);
         start.setLayout(null);
         start.getContentPane().removeAll();
         start.revalidate();
         start.repaint();
-        start.getContentPane().setBackground(bg);
+        
         //Buttons
         JButton b1 = new JButton("Start Game");
         b1.setBounds(100, 160, 200, 40);
@@ -58,6 +68,9 @@ public class startscreen {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 start.setVisible(false);
+                if(timerrun == true){
+                    timer.cancel();
+                }
                 startScores();
             }
         });
@@ -69,6 +82,9 @@ public class startscreen {
         b3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                if(timerrun == true){
+                    timer.cancel();
+                }
                 System.exit(0);
             }
         });
@@ -91,6 +107,37 @@ public class startscreen {
         start.add(title);
         start.setLocation((int)(dim.getWidth()-400)/2,(int)(dim.getHeight()-560)/2);
         start.setVisible(true);
+        
+        startTimer(start);
+    }
+
+    private static void startTimer(final JFrame start) {
+        timerrun = true;
+        step = 0;
+        timer = new Timer();
+        TimerTask setFields = new TimerTask() {
+
+            @Override
+            public void run() {
+                Color bg = new Color(155, 90, 182);
+                if(step == 0){
+                    bg = new Color(155, 90, 182);
+                } else if(step == 1){
+                    bg = new Color(26, 188, 156);
+                } else if(step == 2){
+                    bg = new Color(230, 126, 34);
+                } else if(step == 3){
+                    bg = new Color(243, 156, 18);
+                } else if(step == 4){
+                    bg = new Color(46, 204, 113);
+                    step = 0;
+                }
+                step++;
+                start.getContentPane().setBackground(bg);
+            }
+        };
+
+        timer.schedule(setFields, 0, 1000);
     }
     
 }
